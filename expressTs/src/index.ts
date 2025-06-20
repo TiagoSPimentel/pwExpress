@@ -10,8 +10,18 @@ import path from 'path';
 dotenv.config();
 
 const app = express();
-const hbs = create({});
 const PORT = process.env.PORT || 3333;
+
+const hbs = create({
+  helpers: {
+    nodeTechnologies: function (technologies: any[]) {
+      if (!Array.isArray(technologies)) {
+        return [];
+      }
+      return technologies.filter(tech => tech.poweredByNodejs);
+    }
+  }
+});
 
 // Configuração do Handlebars
 app.engine('handlebars', hbs.engine);
