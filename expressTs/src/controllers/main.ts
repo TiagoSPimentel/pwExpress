@@ -10,8 +10,8 @@ export const index = (req: Request, res: Response) => {
 
 export const hb1 = (req: Request, res: Response) => {
   res.render("main/hb1", {
+    titulo: "Página HB1",
     mensagem: "Olá, você está aprendendo Express + Handlebars!",
-    layout: false,
   });
 };
 

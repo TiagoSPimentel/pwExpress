@@ -1,17 +1,21 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.showHb4 = exports.showHb3 = exports.showHb2 = exports.showHb1 = void 0;
+exports.gerarLorem = exports.hb4 = exports.hb3 = exports.hb2 = exports.hb1 = exports.index = void 0;
 /**
  * Controller: Responsável por lidar com as requisições das páginas Handlebars.
  */
-const showHb1 = (req, res) => {
+const index = (req, res) => {
+    res.send('Hello world com logger!');
+};
+exports.index = index;
+const hb1 = (req, res) => {
     res.render("main/hb1", {
+        titulo: "Página HB1",
         mensagem: "Olá, você está aprendendo Express + Handlebars!",
-        layout: false,
     });
 };
-exports.showHb1 = showHb1;
-const showHb2 = (req, res) => {
+exports.hb1 = hb1;
+const hb2 = (req, res) => {
     res.render("main/hb2", {
         poweredByNodejs: true,
         name: "Express",
@@ -19,8 +23,8 @@ const showHb2 = (req, res) => {
         layout: false,
     });
 };
-exports.showHb2 = showHb2;
-const showHb3 = (req, res) => {
+exports.hb2 = hb2;
+const hb3 = (req, res) => {
     const profes = [
         { nome: "David Fernandes", sala: 1238 },
         { nome: "Horácio Fernandes", sala: 1233 },
@@ -29,8 +33,8 @@ const showHb3 = (req, res) => {
     ];
     res.render("main/hb3", { profes, layout: false });
 };
-exports.showHb3 = showHb3;
-const showHb4 = (req, res) => {
+exports.hb3 = hb3;
+const hb4 = (req, res) => {
     const technologies = [
         { name: "Express", type: "Framework", poweredByNodejs: true },
         { name: "Laravel", type: "Framework", poweredByNodejs: false },
@@ -42,4 +46,17 @@ const showHb4 = (req, res) => {
     ];
     res.render("main/hb4", { technologies, layout: false });
 };
-exports.showHb4 = showHb4;
+exports.hb4 = hb4;
+const gerarLorem = (req, res) => {
+    const { count } = req.params;
+    const numParagrafos = parseInt(count, 10);
+    if (isNaN(numParagrafos) || numParagrafos <= 0) {
+        return res.status(400).json({ error: 'Parâmetro inválido. Informe um número inteiro positivo.' });
+    }
+    const loremText = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.`;
+    const paragrafos = Array(numParagrafos)
+        .fill(`<p>${loremText}</p>`)
+        .join('\n');
+    res.send(paragrafos);
+};
+exports.gerarLorem = gerarLorem;

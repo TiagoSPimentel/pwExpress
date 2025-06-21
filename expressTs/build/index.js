@@ -8,7 +8,6 @@ const dotenv_1 = __importDefault(require("dotenv"));
 const path_1 = __importDefault(require("path"));
 const express_handlebars_1 = require("express-handlebars");
 const loggerMiddleware_1 = require("./middlewares/loggerMiddleware");
-const lorem_1 = __importDefault(require("./routes/lorem"));
 const mainRoutes_1 = __importDefault(require("./routes/mainRoutes"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
@@ -30,15 +29,11 @@ app.set('views', path_1.default.join(__dirname, 'views'));
 // Middleware de logger
 const logFormat = process.env.LOG_FORMAT === 'complete' ? 'complete' : 'simple';
 app.use((0, loggerMiddleware_1.loggerMiddleware)(logFormat));
-// Rota raiz simples
-app.get('/', (req, res) => {
-    res.send('Hello world com logger!');
-});
 // Rotas externas
-app.use('/lorem', lorem_1.default);
+app.use('/', mainRoutes_1.default);
 app.use('/hbs', mainRoutes_1.default); // ← Aqui está usando as rotas novas com controller separado
 // Start do servidor
 app.listen(PORT, () => {
-    console.log(`Servidor rodando na porta ${PORT}`);
+    console.log(`Servidor rodando em http://localhost:${PORT}`);
 });
-//http://localhost:3333/hbs/hbs3 ==> para acessar
+//http://localhost:3333/hbs/hb3 ==> para acessar
