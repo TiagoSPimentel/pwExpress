@@ -1,17 +1,17 @@
-import { Request, Response } from 'express';
-import dotenv from 'dotenv';
-import { loggerMiddleware } from './loggerMiddleware';
-import loremRouter from './routes/lorem';
-import hbRouter from './routes/hb';  
 import express from 'express';
-import { create } from 'express-handlebars';
+import dotenv from 'dotenv';
 import path from 'path';
+import { create } from 'express-handlebars';
+import { loggerMiddleware } from './middlewares/loggerMiddleware';
+
+import mainRoutes from './routes/mainRoutes';
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3333;
 
+// Configuração do Handlebars
 const hbs = create({
   helpers: {
     nodeTechnologies: function (technologies: any[]) {
@@ -23,21 +23,22 @@ const hbs = create({
   }
 });
 
-// Configuração do Handlebars
 app.engine('handlebars', hbs.engine);
 app.set('view engine', 'handlebars');
-app.set('views', path.join(__dirname, '..', 'views'));
+app.set('views', path.join(__dirname, 'views'));
 
+// Middleware de logger
 const logFormat = process.env.LOG_FORMAT === 'complete' ? 'complete' : 'simple';
 app.use(loggerMiddleware(logFormat));
 
-app.get('/', (req: Request, res: Response) => {
-  res.send('Hello world com logger!');
-});
 
 // Rotas externas
-app.use('/lorem', loremRouter);
-app.use('/hbs', hbRouter);//http://localhost:3333/hbs/hbs3 ==> para acessar
+app.use('/', mainRoutes);
+app.use('/hbs', mainRoutes);  // ← Aqui está usando as rotas novas com controller separado
+
+// Start do servidor
 app.listen(PORT, () => {
-  console.log(`Servidor rodando na porta ${PORT}`);
+  console.log(`Servidor rodando em http://localhost:${PORT}`);
 });
+
+//http://localhost:3333/hbs/hb3 ==> para acessar

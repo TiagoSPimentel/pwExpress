@@ -3,35 +3,42 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const dotenv_1 = __importDefault(require("dotenv"));
-const loggerMiddleware_1 = require("./loggerMiddleware");
-const lorem_1 = __importDefault(require("./routes/lorem"));
-const hb_1 = __importDefault(require("./routes/hb"));
 const express_1 = __importDefault(require("express"));
-const express_handlebars_1 = require("express-handlebars");
+const dotenv_1 = __importDefault(require("dotenv"));
 const path_1 = __importDefault(require("path"));
+const express_handlebars_1 = require("express-handlebars");
+const loggerMiddleware_1 = require("./middlewares/loggerMiddleware");
+const lorem_1 = __importDefault(require("./routes/lorem"));
+const mainRoutes_1 = __importDefault(require("./routes/mainRoutes"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const PORT = process.env.PORT || 3333;
+// Configuração do Handlebars
 const hbs = (0, express_handlebars_1.create)({
     helpers: {
-        nodeTechnologies: function (tecnologias) {
-            return tecnologias.filter(tec => tec.poweredByNodejs);
+        nodeTechnologies: function (technologies) {
+            if (!Array.isArray(technologies)) {
+                return [];
+            }
+            return technologies.filter(tech => tech.poweredByNodejs);
         }
     }
 });
-// Configuração do Handlebars
 app.engine('handlebars', hbs.engine);
 app.set('view engine', 'handlebars');
-app.set('views', path_1.default.join(__dirname, '..', 'views'));
+app.set('views', path_1.default.join(__dirname, 'views'));
+// Middleware de logger
 const logFormat = process.env.LOG_FORMAT === 'complete' ? 'complete' : 'simple';
 app.use((0, loggerMiddleware_1.loggerMiddleware)(logFormat));
+// Rota raiz simples
 app.get('/', (req, res) => {
     res.send('Hello world com logger!');
 });
 // Rotas externas
 app.use('/lorem', lorem_1.default);
-app.use('/hbs', hb_1.default); //http://localhost:3333/hbs/hbs3 ==> para acessar
+app.use('/hbs', mainRoutes_1.default); // ← Aqui está usando as rotas novas com controller separado
+// Start do servidor
 app.listen(PORT, () => {
     console.log(`Servidor rodando na porta ${PORT}`);
 });
+//http://localhost:3333/hbs/hbs3 ==> para acessar
